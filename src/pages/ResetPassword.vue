@@ -1,0 +1,57 @@
+<template>
+  <q-page padding>
+    <q-form class="row justify-center" @submit.prevent="handlePasswordReset">
+      <p class="col-12 text-h5 text-center">nova senha:</p>
+      <div class="col-md-4 col-sm-6 col-xs-10 q-gutter-y-sm">
+        <q-input label="new password" v-model="password" />
+        <div class="full-width q-pt-md q-gutter-y-sm">
+          <q-btn
+            label="avançar"
+            color="primary"
+            class="full-width"
+            outline
+            type="subimit"
+          />
+        </div>
+      </div>
+    </q-form>
+  </q-page>
+</template>
+<script>
+import { defineComponent, ref, onMounted } from "vue";
+import useAuthUser from "src/composables/useAuthUser";
+import { useRoute, useRouter } from "vue-router";
+import { getRedirectObj } from "src/modules/utils";
+
+export default defineComponent({
+  name: "PageResetPassword",
+
+  setup() {
+    const { resetPassword } = useAuthUser();
+
+    const router = useRouter();
+    const route = useRoute();
+
+    let accessToken = "";
+
+    const password = ref("");
+
+    // onMounted(() => {
+    //   if (route.query.redirect) {
+    //     const redirectObj = getRedirectObj(to.query.redirect);
+
+    //     accessToken = redirectObj["/access_token"];
+    //   }
+    // });
+
+    const handlePasswordReset = async () => {
+      await resetPassword(token, password.value);
+      router.push({ name: "login" });
+    };
+    return {
+      password,
+      handlePasswordReset,
+    };
+  },
+});
+</script>
