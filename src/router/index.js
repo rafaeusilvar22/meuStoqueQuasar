@@ -42,6 +42,7 @@ export default route(function (/* { store, ssrContext } */) {
       console.log(to.hash);
       return { name: "reset-password" };
     }
+
     if (
       !isLoggedIn() &&
       to.meta.requiresAuth &&
