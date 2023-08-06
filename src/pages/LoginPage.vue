@@ -35,7 +35,7 @@
   </q-page>
 </template>
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import useAuthUser from "src/composables/useAuthUser";
 import { useRouter } from "vue-router";
 
@@ -44,11 +44,17 @@ export default defineComponent({
 
   setup() {
     const router = useRouter();
-    const { login } = useAuthUser();
+    const { login, isLoggedIn } = useAuthUser();
 
     const form = ref({
       email: "",
       password: "",
+    });
+
+    onMounted(() => {
+      if (isLoggedIn) {
+        router.push({ name: "me" });
+      }
     });
 
     const handleLogin = async () => {
