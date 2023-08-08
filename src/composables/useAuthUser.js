@@ -58,19 +58,14 @@ export default function useAuthUser() {
     return user;
   };
 
-  async function resetPassword() {
-    try {
-      const { error } = await supabase.auth.api.updateUser(accessToken, {
-        password: newPassword.value,
-      });
-      if (error) {
-        throw error;
-      }
-
-      router.push("/"); // or whatever you want to do
-    } catch (error) {
-      // handle error
+  async function resetPassword(newPassword) {
+    const { data, error } = await supabase.auth.update({
+      password: newPassword,
+    });
+    if (error) {
+      throw error;
     }
+    return user;
   }
   // const resetPassword = async (acessToken, new_password) => {
   //   const { user, error } = await supabase.auth.updateUser({

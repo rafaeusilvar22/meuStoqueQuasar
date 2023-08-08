@@ -45,6 +45,11 @@ const routes = [
         name: "me",
         component: () => import("pages/MePage.vue"),
       },
+      {
+        path: "category",
+        name: "category",
+        component: () => import("pages/category/ListProducts.vue"),
+      },
     ],
     meta: {
       requiresAuth: true,

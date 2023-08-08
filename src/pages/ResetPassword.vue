@@ -20,6 +20,7 @@
 <script>
 import { defineComponent, ref, onMounted } from "vue";
 import useAuthUser from "src/composables/useAuthUser";
+import useNotify from "src/composables/useNotify";
 import { useRoute, useRouter } from "vue-router";
 import { getRedirectObj } from "src/modules/utils";
 
@@ -28,24 +29,16 @@ export default defineComponent({
 
   setup() {
     const { resetPassword } = useAuthUser();
+    const { notifyError, notifySucess } = useNotify();
 
     const router = useRouter();
     const route = useRoute();
 
-    let accessToken = "";
-
     const password = ref("");
 
-    // onMounted(() => {
-    //   if (route.query.redirect) {
-    //     const redirectObj = getRedirectObj(to.query.redirect);
-
-    //     accessToken = redirectObj["/access_token"];
-    //   }
-    // });
-
     const handlePasswordReset = async () => {
-      await resetPassword(token, password.value);
+      await resetPassword(password.value);
+      notifySucess("Senha alterada com sucesso");
       router.push({ name: "login" });
     };
     return {
