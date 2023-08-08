@@ -6,11 +6,18 @@
         :columns="columns"
         row-key="id"
         class="col-12"
+        :loading="loading"
       >
         <template v-slot:top>
           <span class="text-h6"> Categoria </span>
           <q-space />
-          <q-btn label="Adicionar produto" color="primary" />
+          <q-btn
+            label="Adicionar produto"
+            color="primary"
+            icon="mdi-plus"
+            dense
+            :to="{ name: 'form-product' }"
+          />
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="q-gutter-x-sm">
@@ -42,10 +49,10 @@
 <script>
 const columns = [
   {
-    name: "nome",
+    name: "name",
     align: "left",
     label: "Nome",
-    field: "nome",
+    field: "name",
     sortable: true,
   },
   {
@@ -66,13 +73,15 @@ export default defineComponent({
 
   setup() {
     const categories = ref([]);
-    console.log(categories);
+    const loading = ref(true);
     const { list } = useApi();
     const { notifySucess, notifyError } = useNotify();
 
     const handleListCategories = async () => {
       try {
+        loading.value = true;
         categories.value = await list("category");
+        loading.value = false;
       } catch (error) {
         notifyError(error.message);
       }
@@ -85,6 +94,7 @@ export default defineComponent({
     return {
       columns,
       categories,
+      loading,
     };
   },
 });
