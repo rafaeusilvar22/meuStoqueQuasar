@@ -22,7 +22,6 @@ import { defineComponent, ref, onMounted } from "vue";
 import useAuthUser from "src/composables/useAuthUser";
 import useNotify from "src/composables/useNotify";
 import { useRoute, useRouter } from "vue-router";
-import { getRedirectObj } from "src/modules/utils";
 
 export default defineComponent({
   name: "PageResetPassword",

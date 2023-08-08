@@ -57,25 +57,34 @@ const columns = [
   },
 ];
 
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import useApi from "src/composables/useApi.js";
+import useNotify from "src/composables/useNotify";
 
 export default defineComponent({
   name: "PageCategoryList",
 
   setup() {
     const categories = ref([]);
+    console.log(categories);
     const { list } = useApi();
+    const { notifySucess, notifyError } = useNotify();
 
     const handleListCategories = async () => {
       try {
         categories.value = await list("category");
-      } catch (error) {}
+      } catch (error) {
+        notifyError(error.message);
+      }
     };
+
+    onMounted(() => {
+      handleListCategories();
+    });
+
     return {
       columns,
       categories,
-      handleListCategories,
     };
   },
 });
