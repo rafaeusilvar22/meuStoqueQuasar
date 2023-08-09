@@ -21,7 +21,13 @@
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="q-gutter-x-sm">
-            <q-btn icon="mdi-pencil-outline" color="primary" dense size="sm">
+            <q-btn
+              icon="mdi-pencil-outline"
+              color="primary"
+              dense
+              size="sm"
+              @click="handleEdit(props.row)"
+            >
               <q-tooltip
                 anchor="top middle"
                 self="bottom middle"
@@ -30,7 +36,13 @@
                 Editar
               </q-tooltip>
             </q-btn>
-            <q-btn icon="mdi-delete-outline" color="negative" dense size="sm">
+            <q-btn
+              icon="mdi-delete-outline"
+              color="negative"
+              dense
+              size="sm"
+              @click="handleRemoveCategory(props.row)"
+            >
               <q-tooltip
                 anchor="top middle"
                 self="bottom middle"
@@ -67,6 +79,8 @@ const columns = [
 import { defineComponent, ref, onMounted } from "vue";
 import useApi from "src/composables/useApi.js";
 import useNotify from "src/composables/useNotify";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 
 export default defineComponent({
   name: "PageCategoryList",
@@ -74,14 +88,39 @@ export default defineComponent({
   setup() {
     const categories = ref([]);
     const loading = ref(true);
-    const { list } = useApi();
+    const { list, remove } = useApi();
     const { notifySucess, notifyError } = useNotify();
+    const router = useRouter();
+
+    const table = "category";
+    const $q = useQuasar();
 
     const handleListCategories = async () => {
       try {
         loading.value = true;
-        categories.value = await list("category");
+        categories.value = await list(table);
         loading.value = false;
+      } catch (error) {
+        notifyError(error.message);
+      }
+    };
+
+    const handleEdit = (category) => {
+      router.push({ name: "form-product", params: { id: category.id } });
+    };
+
+    const handleRemoveCategory = async (category) => {
+      try {
+        $q.dialog({
+          title: "Confirmar",
+          message: `Deseja excluir ${category.name}?`,
+          cancel: true,
+          persistent: true,
+        }).onOk(async () => {
+          await remove(table, category.id);
+          notifySucess("Removido com sucesso");
+          handleListCategories();
+        });
       } catch (error) {
         notifyError(error.message);
       }
@@ -95,6 +134,8 @@ export default defineComponent({
       columns,
       categories,
       loading,
+      handleEdit,
+      handleRemoveCategory,
     };
   },
 });

@@ -31,12 +31,8 @@ export default function userApi() {
   const update = async (table, form) => {
     const { data, error } = await supabase
       .from(table)
-      .update([
-        {
-          ...form,
-        },
-      ])
-      .match({ id: from.id });
+      .update({ ...form })
+      .match({ id: form.id });
     if (error) throw error;
     return data;
   };

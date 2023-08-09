@@ -8,9 +8,13 @@
         class="col-md-7 col-xs-12 col-sm-12 q-gutter-y-md"
         @submit.prevent="handleSubmit"
       >
-        <q-input label="Name" v-model="form.name" />
+        <q-input
+          label="Name"
+          v-model="form.name"
+          :rules="[(val) => (val && val.length > 0) || 'Nome obrigatorio']"
+        />
         <q-btn
-          label="salvar"
+          :label="isUpdate ? 'Atualizar' : 'Salvar'"
           color="primary"
           class="full-width"
           rounded
@@ -29,8 +33,8 @@
   </q-page>
 </template>
 <script>
-import { defineComponent, ref } from "vue";
-import { useRouter } from "vue-router";
+import { defineComponent, ref, onMounted, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import useApi from "src/composables/useApi.js";
 import useNotify from "src/composables/useNotify";
 export default defineComponent({
@@ -39,26 +43,52 @@ export default defineComponent({
   setup() {
     const table = "category";
     const router = useRouter();
-    const { post } = useApi();
+    const route = useRoute();
+    const { post, getById, update } = useApi();
     const { notifyError, notifySucess } = useNotify();
 
-    const form = {
+    const isUpdate = computed(() => route.params.id);
+
+    let category = {};
+    const form = ref({
       name: "",
-    };
+    });
+    onMounted(() => {
+      if (isUpdate.value) {
+        handleGetCategory(isUpdate.value);
+      }
+    });
 
     const handleSubmit = async () => {
       try {
-        await post(table, form.value);
-        notifySucess("Adicionado com sucesso");
+        if (isUpdate.value) {
+          console.log(form.value);
+          await update(table, {
+            ...form.value,
+          });
+          notifySucess("Nome atualizado");
+        } else {
+          await post(table, form.value);
+          notifySucess("Adicionado com sucesso");
+        }
         router.push({ name: "category" });
       } catch (error) {
         notifyError(error.message);
       }
-      return {};
+    };
+
+    const handleGetCategory = async (id) => {
+      try {
+        category = await getById(table, id);
+        form.value = category;
+      } catch (error) {
+        notifyError(error.message);
+      }
     };
     return {
       handleSubmit,
       form,
+      isUpdate,
     };
   },
 });
