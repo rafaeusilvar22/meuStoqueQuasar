@@ -48,12 +48,22 @@ const routes = [
       {
         path: "category",
         name: "category",
-        component: () => import("pages/category/ListProducts.vue"),
+        component: () => import("pages/category/ListCategories.vue"),
+      },
+      {
+        path: "form-category/:id?",
+        name: "form-category",
+        component: () => import("pages/category/FormCategories.vue"),
+      },
+      {
+        path: "product",
+        name: "product",
+        component: () => import("pages/product/ListProducts.vue"),
       },
       {
         path: "form-product/:id?",
         name: "form-product",
-        component: () => import("pages/category/FormProducts.vue"),
+        component: () => import("pages/product/FormProducts.vue"),
       },
     ],
     meta: {

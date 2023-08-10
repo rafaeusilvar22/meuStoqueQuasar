@@ -12,11 +12,12 @@
           <span class="text-h6"> Categoria </span>
           <q-space />
           <q-btn
+            v-if="$q.platform.is.desktop"
             label="Adicionar produto"
             color="primary"
             icon="mdi-plus"
             dense
-            :to="{ name: 'form-product' }"
+            :to="{ name: 'form-category' }"
           />
         </template>
         <template v-slot:body-cell-actions="props">
@@ -55,6 +56,18 @@
         </template>
       </q-table>
     </div>
+    <q-page-sticky
+      v-if="$q.platform.is.mobile"
+      position="bottom-right"
+      :offset="[18, 18]"
+    >
+      <q-btn
+        fab
+        icon="mdi-plus"
+        color="primary"
+        :to="{ name: 'form-category' }"
+      />
+    </q-page-sticky>
   </q-page>
 </template>
 
@@ -106,7 +119,7 @@ export default defineComponent({
     };
 
     const handleEdit = (category) => {
-      router.push({ name: "form-product", params: { id: category.id } });
+      router.push({ name: "form-category", params: { id: category.id } });
     };
 
     const handleRemoveCategory = async (category) => {
