@@ -14,7 +14,13 @@
           :rules="[(val) => (val && val.length > 0) || 'Nome obrigatorio']"
         />
         <q-editor v-model="form.description" min-height="5rem" />
-        <q-input label="Imagem" stack-label v-model="img" type="file" />
+        <q-input
+          label="Image"
+          stack-label
+          v-model="img"
+          type="file"
+          accept="image/*"
+        />
         <q-input
           label="Quantidade"
           v-model="form.amount"
@@ -70,7 +76,7 @@ export default defineComponent({
     const optionsCategory = ref([]);
     const router = useRouter();
     const route = useRoute();
-    const { post, getById, update, list, uploadImg } = useApi();
+    const { post, getById, update, list, uploadImg, getUrlPublic } = useApi();
     const { notifyError, notifySucess } = useNotify();
 
     const isUpdate = computed(() => route.params.id);
@@ -86,6 +92,7 @@ export default defineComponent({
     });
     const img = ref([]);
 
+    const imgUrl = ref([]);
     onMounted(() => {
       handleListCategories();
       if (isUpdate.value) {
@@ -95,12 +102,14 @@ export default defineComponent({
 
     const handleListCategories = async () => {
       optionsCategory.value = await list("category");
-      console.log(optionsCategory.value);
     };
 
     const handleSubmit = async () => {
       if (img.value.length > 0) {
-        const imgUrl = await uploadImg(img.value[0], "products");
+        imgUrl.value = await uploadImg(img.value[0], "products");
+        // const test = await getUrlPublic();
+        console.log(imgUrl);
+        // console.log("aqui:", await uploadImg());
         form.value.img_url = imgUrl;
       }
       try {
@@ -123,6 +132,7 @@ export default defineComponent({
       try {
         product = await getById(table, id);
         form.value = product;
+        // console.log("info produto: ", product);
       } catch (error) {
         notifyError(error.message);
       }
@@ -133,6 +143,7 @@ export default defineComponent({
       isUpdate,
       optionsCategory,
       img,
+      imgUrl,
     };
   },
 });

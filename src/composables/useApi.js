@@ -47,26 +47,27 @@ export default function userApi() {
 
   const uploadImg = async (file, storage) => {
     const fileName = uuidv4();
+    console.log("file", file);
     const { error } = supabase.storage.from(storage).upload(fileName, file, {
       cacheControl: "3600",
       upsert: false,
     });
     const publicUrl = await getUrlPublic(fileName, storage);
-
+    console.log("public", publicUrl);
     if (error) throw error;
 
     return publicUrl;
   };
 
   const getUrlPublic = async (fileName, storage) => {
-    const { publicURL, error } = supabase.storage
+    const { data, error } = supabase.storage
       .from(storage)
       .getPublicUrl(fileName);
+    console.log("data geturl", data.publicUrl);
     if (error) throw error;
 
-    return publicURL;
+    return data.publicUrl;
   };
-
   return {
     list,
     getById,
@@ -74,5 +75,6 @@ export default function userApi() {
     update,
     remove,
     uploadImg,
+    getUrlPublic,
   };
 }

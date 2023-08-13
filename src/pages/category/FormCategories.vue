@@ -62,7 +62,6 @@ export default defineComponent({
     const handleSubmit = async () => {
       try {
         if (isUpdate.value) {
-          console.log(form.value);
           await update(table, {
             ...form.value,
           });
